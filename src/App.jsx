@@ -2,7 +2,6 @@ import React from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 
-import Navbar from './components/Navbar'
 import ProtectedRoute from './components/ProtectedRoute'
 
 import Gallery from './pages/Gallery'
@@ -13,35 +12,30 @@ import Dashboard from './pages/Dashboard'
 export default function App() {
   return (
     <AuthProvider>
-      <div className="min-h-screen">
-        <div className="max-w-6xl mx-auto p-6">
-          
-          {/* Top Navigation Bar */}
-          <Navbar />
 
-          {/* Routes */}
-          <Routes>
-            {/* Default → redirect to Gallery */}
-            <Route path="/" element={<Navigate to="/gallery" replace />} />
+      {/* Entire app handles layout INSIDE each page */}
+      <Routes>
 
-            {/* Public Routes */}
-            <Route path="/gallery" element={<Gallery />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
+        {/* Default → redirect to Gallery */}
+        <Route path="/" element={<Navigate to="/gallery" replace />} />
 
-            {/* Private Route */}
-            <Route 
-              path="/dashboard" 
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              } 
-            />
-          </Routes>
+        {/* Public Pages */}
+        <Route path="/gallery" element={<Gallery />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
 
-        </div>
-      </div>
+        {/* Private Route */}
+        <Route 
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+      </Routes>
+
     </AuthProvider>
   )
 }
