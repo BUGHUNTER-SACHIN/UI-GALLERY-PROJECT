@@ -94,7 +94,7 @@ export default function Gallery() {
 
         {/* Footer */}
         <p className="text-center text-gray-600 mt-10 mb-4">
-          © 2024 AetherGallery
+          © 2025 AetherGallery
         </p>
       </div>
     </Layout>
