@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -24,7 +25,10 @@ export default function Auth() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Load saved accounts from localStorage
+        /**
+         * Initialize saved accounts from browser storage on component mount.
+         * Retrieves previously authenticated user accounts for quick account switching.
+         */
         const accounts = localStorage.getItem('saved_accounts');
         if (accounts) {
             setSavedAccounts(JSON.parse(accounts));
@@ -44,7 +48,8 @@ export default function Auth() {
         };
 
         const existing = savedAccounts.filter(acc => acc.email !== email);
-        const updated = [newAccount, ...existing].slice(0, 5); // Keep max 5 accounts
+        // Maintain a maximum of 5 most recently used accounts to prevent storage bloat
+        const updated = [newAccount, ...existing].slice(0, 5);
 
         setSavedAccounts(updated);
         localStorage.setItem('saved_accounts', JSON.stringify(updated));
@@ -103,7 +108,10 @@ export default function Auth() {
                 animate={{ opacity: 1, y: 0 }}
                 className="w-full max-w-md relative z-10"
             >
-                {/* Logo/Title */}
+                {/** 
+                 * Application branding section
+                 * Displays the AetherGallery logo with gradient text effect and tagline
+                 */}
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -115,18 +123,24 @@ export default function Auth() {
                     <p className="text-gray-400">Your creative cloud platform</p>
                 </motion.div>
 
-                {/* Main Auth Card */}
+                {/** 
+                 * Primary authentication container
+                 * Glassmorphism card containing login/signup forms and account management
+                 */}
                 <motion.div
                     layout
                     className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl p-8 shadow-2xl"
                 >
-                    {/* Tabs */}
+                    {/** 
+                     * Authentication mode toggle
+                     * Allows users to switch between Sign In and Sign Up modes
+                     */}
                     <div className="flex gap-2 mb-6 bg-white/5 p-1 rounded-xl">
                         <button
                             onClick={() => setIsLogin(true)}
                             className={`flex-1 py-3 rounded-lg font-medium transition-all ${isLogin
-                                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-                                    : 'text-gray-400 hover:text-white'
+                                ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
+                                : 'text-gray-400 hover:text-white'
                                 }`}
                         >
                             Sign In
@@ -134,15 +148,18 @@ export default function Auth() {
                         <button
                             onClick={() => setIsLogin(false)}
                             className={`flex-1 py-3 rounded-lg font-medium transition-all ${!isLogin
-                                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-                                    : 'text-gray-400 hover:text-white'
+                                ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
+                                : 'text-gray-400 hover:text-white'
                                 }`}
                         >
                             Sign Up
                         </button>
                     </div>
 
-                    {/* Account Switcher Button */}
+                    {/** 
+                     * Quick account switcher trigger
+                     * Conditionally rendered when saved accounts exist in localStorage
+                     */}
                     {savedAccounts.length > 0 && (
                         <Button
                             type="button"
@@ -155,7 +172,10 @@ export default function Auth() {
                         </Button>
                     )}
 
-                    {/* Saved Accounts List */}
+                    {/** 
+                     * Saved accounts dropdown panel
+                     * Animated list of previously authenticated accounts with remove functionality
+                     */}
                     <AnimatePresence>
                         {showAccountSwitcher && (
                             <motion.div
@@ -190,7 +210,10 @@ export default function Auth() {
                         )}
                     </AnimatePresence>
 
-                    {/* Form */}
+                    {/** 
+                     * Authentication form
+                     * Handles both sign-in and sign-up flows with email/password validation
+                     */}
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-2">
                             <label className="text-sm text-gray-400 flex items-center gap-2">
@@ -252,7 +275,10 @@ export default function Auth() {
                         </Button>
                     </form>
 
-                    {/* Additional Info */}
+                    {/** 
+                     * Mode switching prompt
+                     * Provides contextual link to toggle between sign-in and sign-up modes
+                     */}
                     <div className="mt-6 text-center text-sm text-gray-400">
                         {isLogin ? (
                             <p>
@@ -278,7 +304,10 @@ export default function Auth() {
                     </div>
                 </motion.div>
 
-                {/* Features */}
+                {/** 
+                 * Feature highlights section
+                 * Showcases key platform capabilities: AI Art generation, Gallery management, and 3D viewing
+                 */}
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
