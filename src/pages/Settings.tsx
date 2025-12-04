@@ -62,7 +62,7 @@ export default function Settings() {
                 <h1 className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600 mb-4">
                     Settings
                 </h1>
-                <p className="text-xl text-gray-400">Customize your experience</p>
+                <p className="text-xl text-muted-foreground">Customize your experience</p>
             </motion.div>
 
             <div className="space-y-6">
@@ -72,19 +72,20 @@ export default function Settings() {
                     animate={{ opacity: 1, y: 0 }}
                     className="glass-card p-6"
                 >
-                    <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                    <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
                         {theme === "dark" ? <Moon className="w-6 h-6" /> : <Sun className="w-6 h-6" />}
                         Appearance
                     </h2>
                     <div className="space-y-4">
-                        <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+                        <div className="flex items-center justify-between p-4 bg-black/5 dark:bg-white/5 rounded-lg">
                             <div>
-                                <Label className="text-white font-medium">Dark Mode</Label>
-                                <p className="text-sm text-gray-400">Toggle between dark and light theme</p>
+                                <Label className="text-foreground font-medium">Dark Mode</Label>
+                                <p className="text-sm text-muted-foreground">Toggle between dark and light theme</p>
                             </div>
                             <Switch
                                 checked={theme === "dark"}
                                 onCheckedChange={toggleTheme}
+                                className="border-black dark:border-transparent"
                             />
                         </div>
                     </div>
@@ -97,19 +98,20 @@ export default function Settings() {
                     transition={{ delay: 0.1 }}
                     className="glass-card p-6"
                 >
-                    <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                    <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
                         <Bell className="w-6 h-6" />
                         Notifications
                     </h2>
                     <div className="space-y-4">
-                        <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+                        <div className="flex items-center justify-between p-4 bg-black/5 dark:bg-white/5 rounded-lg">
                             <div>
-                                <Label className="text-white font-medium">Enable Notifications</Label>
-                                <p className="text-sm text-gray-400">Receive updates about your uploads and conversions</p>
+                                <Label className="text-foreground font-medium">Enable Notifications</Label>
+                                <p className="text-sm text-muted-foreground">Receive updates about your uploads and conversions</p>
                             </div>
                             <Switch
                                 checked={notifications}
                                 onCheckedChange={setNotifications}
+                                className="border-black dark:border-transparent"
                             />
                         </div>
                     </div>
@@ -122,15 +124,15 @@ export default function Settings() {
                     transition={{ delay: 0.2 }}
                     className="glass-card p-6"
                 >
-                    <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                    <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
                         <SettingsIcon className="w-6 h-6" />
                         Preferences
                     </h2>
                     <div className="space-y-4">
-                        <div className="p-4 bg-white/5 rounded-lg">
-                            <Label className="text-white font-medium mb-2 block">Default Upload Category</Label>
+                        <div className="p-4 bg-black/5 dark:bg-white/5 rounded-lg">
+                            <Label className="text-foreground font-medium mb-2 block">Default Upload Category</Label>
                             <Select value={defaultCategory} onValueChange={setDefaultCategory}>
-                                <SelectTrigger className="w-full bg-white/5 border-white/10">
+                                <SelectTrigger className="w-full bg-white dark:bg-white/5 border-black/10 dark:border-white/10 text-foreground">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -144,10 +146,10 @@ export default function Settings() {
                             </Select>
                         </div>
 
-                        <div className="p-4 bg-white/5 rounded-lg">
-                            <Label className="text-white font-medium mb-2 block">Image Quality</Label>
+                        <div className="p-4 bg-black/5 dark:bg-white/5 rounded-lg">
+                            <Label className="text-foreground font-medium mb-2 block">Image Quality</Label>
                             <Select value={imageQuality} onValueChange={setImageQuality}>
-                                <SelectTrigger className="w-full bg-white/5 border-white/10">
+                                <SelectTrigger className="w-full bg-white dark:bg-white/5 border-black/10 dark:border-white/10 text-foreground">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -158,14 +160,15 @@ export default function Settings() {
                             </Select>
                         </div>
 
-                        <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+                        <div className="flex items-center justify-between p-4 bg-black/5 dark:bg-white/5 rounded-lg">
                             <div>
-                                <Label className="text-white font-medium">Auto-Rotate 3D Models</Label>
-                                <p className="text-sm text-gray-400">Automatically rotate 3D models in viewer</p>
+                                <Label className="text-foreground font-medium">Auto-Rotate 3D Models</Label>
+                                <p className="text-sm text-muted-foreground">Automatically rotate 3D models in viewer</p>
                             </div>
                             <Switch
                                 checked={autoRotate3D}
                                 onCheckedChange={setAutoRotate3D}
+                                className="border-black dark:border-transparent"
                             />
                         </div>
                     </div>
@@ -178,7 +181,7 @@ export default function Settings() {
                     transition={{ delay: 0.3 }}
                     className="glass-card p-6"
                 >
-                    <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                    <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
                         <ImageIcon className="w-6 h-6" />
                         Data & Storage
                     </h2>
@@ -204,8 +207,8 @@ export default function Settings() {
                     <h2 className="text-2xl font-bold text-red-500 mb-6">Danger Zone</h2>
                     <div className="space-y-4">
                         <div className="p-4 bg-red-500/10 rounded-lg">
-                            <Label className="text-white font-medium mb-2 block">Delete Account</Label>
-                            <p className="text-sm text-gray-400 mb-4">
+                            <Label className="text-foreground font-medium mb-2 block">Delete Account</Label>
+                            <p className="text-sm text-muted-foreground mb-4">
                                 Once you delete your account, there is no going back. Please be certain.
                             </p>
                             <Button

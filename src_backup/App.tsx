@@ -16,7 +16,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Categories from "./pages/Categories";
 import NotFound from "./pages/NotFound";
-import NeoConvert from "./pages/NeoConvert";
+import AIConverter from "./pages/AIConverter";
 
 const queryClient = new QueryClient();
 
@@ -35,49 +35,49 @@ const App = () => (
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/categories" element={<Categories />} />
-              
+
               {/* Protected Routes - Require Authentication */}
-              <Route 
-                path="/gallery" 
+              <Route
+                path="/gallery"
                 element={
                   <ProtectedRoute>
                     <Gallery />
                   </ProtectedRoute>
-                } 
+                }
               />
-              <Route 
-                path="/upload" 
+              <Route
+                path="/upload"
                 element={
                   <ProtectedRoute>
                     <Upload />
                   </ProtectedRoute>
-                } 
+                }
               />
-              <Route 
-                path="/edit" 
+              <Route
+                path="/edit"
                 element={
                   <ProtectedRoute>
                     <EditTools />
                   </ProtectedRoute>
-                } 
+                }
               />
-              <Route 
-                path="/3d-view" 
+              <Route
+                path="/3d-view"
                 element={
                   <ProtectedRoute>
                     <ThreeDView />
                   </ProtectedRoute>
-                } 
+                }
               />
-              <Route 
-                path="/neoconvert" 
+              <Route
+                path="/ai-converter"
                 element={
                   <ProtectedRoute>
-                    <NeoConvert />
+                    <AIConverter />
                   </ProtectedRoute>
-                } 
+                }
               />
-              
+
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

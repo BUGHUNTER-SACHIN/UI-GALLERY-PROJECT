@@ -85,7 +85,7 @@ export default function AIConverter() {
     };
 
     const handleConvert = async () => {
-        if (!selectedFile || !selectedStyle) {
+        if (!selectedImage || !selectedStyle) {
             toast.error("Please upload an image and select a style");
             return;
         }
@@ -93,50 +93,34 @@ export default function AIConverter() {
         setConverting(true);
         setProgress(0);
 
-        try {
-            // Progress simulation
-            const progressInterval = setInterval(() => {
-                setProgress((prev) => {
-                    if (prev >= 90) {
-                        clearInterval(progressInterval);
-                        return 90;
-                    }
-                    return prev + 5;
-                });
-            }, 500);
-
-            // Call the backend API
-            const formData = new FormData();
-            formData.append('image', selectedFile);
-            formData.append('style', selectedStyle);
-            formData.append('strength', strength[0].toString());
-
-            const response = await fetch(`${import.meta.env.VITE_AI_PROXY_URL || 'http://localhost:3000'}/api/convert`, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'x-user-id': user?.uid || 'anonymous'
+        // Simulate progress
+        const interval = setInterval(() => {
+            setProgress(prev => {
+                if (prev >= 95) {
+                    clearInterval(interval);
+                    return 95;
                 }
+                return prev + 5;
             });
+        }, 100);
 
-            clearInterval(progressInterval);
+        try {
+            // STUB: Feature in development
+            // Instead of calling API, we just wait a bit and return the original image
+            await new Promise(resolve => setTimeout(resolve, 2000));
 
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error || 'Conversion failed');
-            }
-
-            const data = await response.json();
+            clearInterval(interval);
             setProgress(100);
-            setConvertedImage(data.output);
 
-            toast.success(`Image converted successfully! (${Math.round(data.processingTime / 1000)}s)`);
+            setConvertedImage(selectedImage);
+            toast.info("AI Feature is currently in development. Returning original image.");
+
         } catch (error) {
-            console.error('Conversion error:', error);
-            toast.error(error instanceof Error ? error.message : "Conversion failed. Please try again.");
+            console.error(error);
+            toast.error("Failed to generate image");
         } finally {
             setConverting(false);
-            setTimeout(() => setProgress(0), 1000);
+            clearInterval(interval);
         }
     };
 

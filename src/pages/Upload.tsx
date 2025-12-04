@@ -9,6 +9,8 @@ import { Progress } from "@/components/ui/progress";
 import { uploadToCloudinary, getCloudinaryImages, saveImagesToLocal } from "@/lib/cloudinary";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { saveImageToFirestore } from "@/lib/firestore";
+import { useAuth } from "@/contexts/AuthContext";
 
 const categories = [
     { id: "nature", name: "Nature" },
@@ -39,16 +41,12 @@ export default function Upload() {
     const processFiles = (newFiles: File[]) => {
         if (newFiles.length === 0) return;
 
-        setFiles(newFiles);
-        const previewUrls: string[] = [];
+        setFiles(prev => [...prev, ...newFiles]);
 
         newFiles.forEach(file => {
             const reader = new FileReader();
             reader.onloadend = () => {
-                previewUrls.push(reader.result as string);
-                if (previewUrls.length === newFiles.length) {
-                    setPreviews(previewUrls);
-                }
+                setPreviews(prev => [...prev, reader.result as string]);
             };
             reader.readAsDataURL(file);
         });
@@ -72,6 +70,12 @@ export default function Upload() {
         }
     };
 
+
+
+    // ... inside component ...
+
+    const { user } = useAuth();
+
     const handleUpload = async () => {
         if (!selectedCategory) {
             toast.error("Please select a category before uploading");
@@ -80,26 +84,42 @@ export default function Upload() {
 
         if (files.length === 0) return;
 
+        if (!user) {
+            toast.error("You must be logged in to upload");
+            return;
+        }
+
         setUploading(true);
         try {
-            const existingImages = await getCloudinaryImages();
             const uploadedResults = [];
 
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 const result = await uploadToCloudinary(file);
                 result.category = selectedCategory;
+
+                // Save to Firestore
+                console.log(`[Upload] Saving to Firestore for user: ${user.uid}`);
+                try {
+                    await saveImageToFirestore(user.uid, result);
+                    console.log("[Upload] Saved to Firestore successfully");
+                } catch (fsError) {
+                    console.error("[Upload] Firestore save failed:", fsError);
+                    throw fsError;
+                }
+
                 uploadedResults.push(result);
-                setUploadProgress(Math.round(((i + 1) / files.length) * 100));
+                const progress = Math.round(((i + 1) / files.length) * 100);
+                console.log(`[Upload] Progress: ${progress}%`);
+                setUploadProgress(progress);
             }
 
-            const updatedImages = [...existingImages, ...uploadedResults];
-            saveImagesToLocal(updatedImages);
             toast.success(`${files.length} file(s) uploaded successfully!`);
 
             setTimeout(() => navigate("/gallery"), 1000);
         } catch (error) {
-            toast.error("Failed to upload. Check your connection or configuration.");
+            console.error(error);
+            toast.error("Failed to upload. Check your connection.");
         } finally {
             setUploading(false);
             setUploadProgress(0);

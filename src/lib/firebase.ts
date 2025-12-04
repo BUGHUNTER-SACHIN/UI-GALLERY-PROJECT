@@ -1,5 +1,9 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { getFirestore, setLogLevel } from "firebase/firestore";
+
+// Enable verbose logging for Firestore to debug connection issues
+setLogLevel('debug');
 
 const firebaseConfig = {
     apiKey: "AIzaSyBKjaBXd1DvHTIyqUfHtIF_E2gCvlz___s",
@@ -13,3 +17,4 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+export const db = getFirestore(app);

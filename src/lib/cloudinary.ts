@@ -23,19 +23,31 @@ export const uploadToCloudinary = async (file: File): Promise<CloudinaryImage> =
     const isVideo = file.type.startsWith('video/');
     const resourceType = isVideo ? 'video' : 'image';
 
-    const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/${resourceType}/upload`,
-        {
-            method: "POST",
-            body: formData,
+    console.log(`[Cloudinary] Starting upload for ${file.name} (${resourceType})`);
+    console.log(`[Cloudinary] Cloud Name: ${CLOUDINARY_CLOUD_NAME}, Preset: ${CLOUDINARY_UPLOAD_PRESET}`);
+
+    try {
+        const response = await fetch(
+            `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/${resourceType}/upload`,
+            {
+                method: "POST",
+                body: formData,
+            }
+        );
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`[Cloudinary] Upload failed: ${response.status} ${response.statusText}`, errorText);
+            throw new Error(`Failed to upload file: ${response.statusText} - ${errorText}`);
         }
-    );
 
-    if (!response.ok) {
-        throw new Error("Failed to upload file");
+        const data = await response.json();
+        console.log(`[Cloudinary] Upload successful:`, data);
+        return data;
+    } catch (error) {
+        console.error(`[Cloudinary] Network or other error:`, error);
+        throw error;
     }
-
-    return response.json();
 };
 
 export const deleteFromCloudinary = async (publicId: string): Promise<void> => {

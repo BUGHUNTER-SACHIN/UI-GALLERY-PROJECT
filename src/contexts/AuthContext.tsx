@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { User, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "firebase/auth";
+import { User, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, setPersistence, browserSessionPersistence } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
 interface AuthContextType {
@@ -34,10 +34,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }, []);
 
     const signIn = async (email: string, password: string) => {
+        await setPersistence(auth, browserSessionPersistence);
         await signInWithEmailAndPassword(auth, email, password);
     };
 
     const signUp = async (email: string, password: string) => {
+        await setPersistence(auth, browserSessionPersistence);
         await createUserWithEmailAndPassword(auth, email, password);
     };
 

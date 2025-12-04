@@ -10,28 +10,10 @@ interface LazyImageProps {
 
 export function LazyImage({ src, alt, className = '', aspectRatio = 'aspect-square' }: LazyImageProps) {
     const [isLoaded, setIsLoaded] = useState(false);
-    const [isInView, setIsInView] = useState(false);
+    const [isInView, setIsInView] = useState(true); // Changed to true to disable lazy loading
     const imgRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        if (!imgRef.current) return;
-
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setIsInView(true);
-                    observer.disconnect();
-                }
-            },
-            {
-                rootMargin: '50px',
-            }
-        );
-
-        observer.observe(imgRef.current);
-
-        return () => observer.disconnect();
-    }, []);
+    // IntersectionObserver removed - images now load immediately for better UX
 
     return (
         <div ref={imgRef} className={`${aspectRatio} relative overflow-hidden ${className}`}>

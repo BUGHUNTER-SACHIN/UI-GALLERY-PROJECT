@@ -13,7 +13,7 @@ const menuItems = [
   { icon: Upload, label: "Upload", path: "/upload" },
   { icon: Paintbrush, label: "Editing Tools", path: "/edit" },
   { icon: Box, label: "View Image in 3D", path: "/3d-view" },
-  { icon: Sparkles, label: "NeoConvert", path: "/neoconvert" },
+  { icon: Sparkles, label: "AI Converter", path: "/ai-converter" },
 ];
 
 export const Sidebar = () => {
@@ -70,15 +70,15 @@ export const Sidebar = () => {
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
-          
+
           return (
             <button
               key={item.path}
               onClick={() => navigate(item.path)}
               className={cn(
                 "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 mb-2",
-                isActive 
-                  ? "bg-sidebar-accent text-sidebar-primary scale-105" 
+                isActive
+                  ? "bg-sidebar-accent text-sidebar-primary scale-105"
                   : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-primary hover:scale-105"
               )}
             >
@@ -95,8 +95,8 @@ export const Sidebar = () => {
             <span className="text-lg transition-transform duration-300">{theme === "dark" ? "🌙" : "☀️"}</span>
             {theme === "dark" ? "Dark Mode" : "Light Mode"}
           </span>
-          <Switch 
-            checked={theme === "dark"} 
+          <Switch
+            checked={theme === "dark"}
             onCheckedChange={toggleTheme}
             className="transition-all duration-300"
           />

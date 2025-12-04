@@ -26,7 +26,7 @@ export function Sidebar() {
             initial={{ x: -280 }}
             animate={{ x: 0, width: collapsed ? 80 : 280 }}
             className={cn(
-                "fixed left-0 top-24 bottom-0 z-40 glass-card border-r border-white/10 transition-all duration-300",
+                "fixed left-0 top-24 bottom-0 z-40 glass-card border-r border-black/10 dark:border-white/10 transition-all duration-300",
                 collapsed ? "w-20" : "w-70"
             )}
         >
@@ -50,19 +50,19 @@ export function Sidebar() {
                                 className={cn(
                                     "relative flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all group",
                                     isActive
-                                        ? "text-white bg-white/10"
-                                        : "text-gray-400 hover:text-white hover:bg-white/5"
+                                        ? "text-white bg-purple-600 shadow-lg"
+                                        : "text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5"
                                 )}
                                 title={collapsed ? item.name : undefined}
                             >
                                 {isActive && (
                                     <motion.div
                                         layoutId="sidebar-indicator"
-                                        className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-xl"
+                                        className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl opacity-0"
                                         transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                                     />
                                 )}
-                                <item.icon className={cn("w-5 h-5 relative z-10 flex-shrink-0", isActive && "text-purple-400")} />
+                                <item.icon className={cn("w-5 h-5 relative z-10 flex-shrink-0", isActive && "text-white")} />
                                 {!collapsed && (
                                     <span className="relative z-10 whitespace-nowrap overflow-hidden">
                                         {item.name}
@@ -75,8 +75,8 @@ export function Sidebar() {
 
                 {/* Footer */}
                 {!collapsed && (
-                    <div className="pt-4 border-t border-white/10">
-                        <p className="text-xs text-gray-500 text-center">
+                    <div className="pt-4 border-t border-black/10 dark:border-white/10">
+                        <p className="text-xs text-muted-foreground text-center">
                             Cloud Canvas Gallery
                         </p>
                     </div>

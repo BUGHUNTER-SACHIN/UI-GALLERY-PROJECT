@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export default function NeoConvert() {
+export default function AIConverter() {
   const [sourceFile, setSourceFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const [convertedUrl, setConvertedUrl] = useState<string>("");
@@ -16,21 +16,21 @@ export default function NeoConvert() {
     setConvertedUrl("");
   };
 
-  const runNeoConvert = async (stylePrompt: string) => {
+  const runAIConverter = async (stylePrompt: string) => {
     if (!sourceFile) {
       setMessage("Please upload an image first.");
       return;
     }
 
     setLoading(true);
-    setMessage("NeoConvert is processing...");
+    setMessage("AI Converter is processing...");
 
     try {
       const fd = new FormData();
       fd.append("file", sourceFile);
       fd.append("prompt", stylePrompt);
 
-      const apiUrl = import.meta.env.VITE_AI_PROXY_URL + "/api/neoconvert";
+      const apiUrl = import.meta.env.VITE_AI_PROXY_URL + "/api/convert";
 
       const res = await fetch(apiUrl, {
         method: "POST",
@@ -49,7 +49,7 @@ export default function NeoConvert() {
       setMessage("Conversion complete!");
     } catch (err) {
       console.error(err);
-      setMessage("NeoConvert failed. Try again.");
+      setMessage("AI Converter failed. Try again.");
     } finally {
       setLoading(false);
     }
@@ -59,7 +59,7 @@ export default function NeoConvert() {
     <div className="p-6 text-white max-w-3xl mx-auto">
 
       <h1 className="text-4xl font-bold mb-6 text-cyan-400">
-        NeoConvert — AI Image Converter
+        AI Converter — Transform Your Images
       </h1>
 
       {/* Upload Box */}
@@ -84,28 +84,28 @@ export default function NeoConvert() {
       {/* Style Buttons */}
       <div className="flex flex-wrap gap-3 mb-6">
         <button
-          onClick={() => runNeoConvert("Convert this image into anime style")}
+          onClick={() => runAIConverter("Convert this image into anime style")}
           className="px-4 py-2 bg-cyan-600 rounded-lg"
         >
           Anime
         </button>
 
         <button
-          onClick={() => runNeoConvert("Convert this image into Pixar 3D cartoon style")}
+          onClick={() => runAIConverter("Convert this image into Pixar 3D cartoon style")}
           className="px-4 py-2 bg-violet-600 rounded-lg"
         >
           Pixar 3D
         </button>
 
         <button
-          onClick={() => runNeoConvert("Convert this into a watercolor painting")}
+          onClick={() => runAIConverter("Convert this into a watercolor painting")}
           className="px-4 py-2 bg-blue-600 rounded-lg"
         >
           Watercolor
         </button>
 
         <button
-          onClick={() => runNeoConvert("Convert this into neon cyberpunk art style")}
+          onClick={() => runAIConverter("Convert this into neon cyberpunk art style")}
           className="px-4 py-2 bg-pink-600 rounded-lg"
         >
           Cyberpunk
