@@ -1,0 +1,277 @@
+import React from 'react';
+import { useState, useRef, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Upload as UploadIcon, Download, RotateCw, FlipHorizontal, FlipVertical, Undo, Image as ImageIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { getCloudinaryImages } from "@/lib/cloudinary";
+export default function ImageEditor() {
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [brightness, setBrightness] = useState([0]);
+  const [contrast, setContrast] = useState([0]);
+  const [saturation, setSaturation] = useState([0]);
+  const [blur, setBlur] = useState([0]);
+  const [hue, setHue] = useState([0]);
+  const [rotation, setRotation] = useState(0);
+  const [flipH, setFlipH] = useState(false);
+  const [flipV, setFlipV] = useState(false);
+  const [filter, setFilter] = useState("none");
+  const [galleryImages, setGalleryImages] = useState([]);
+  const canvasRef = useRef(null);
+  const fileInputRef = useRef(null);
+  const originalImageRef = useRef(null);
+  useEffect(() => {
+    loadGalleryImages();
+  }, []);
+  const loadGalleryImages = async () => {
+    const images = await getCloudinaryImages();
+    setGalleryImages(images);
+  };
+  useEffect(() => {
+    if (selectedImage && canvasRef.current) {
+      applyAllFilters();
+    }
+  }, [brightness, contrast, saturation, blur, hue, rotation, flipH, flipV, filter]);
+  const handleImageUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setSelectedImage(event.target?.result);
+      loadImage(event.target?.result);
+    };
+    reader.readAsDataURL(file);
+  };
+  const handleGallerySelect = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    loadImage(imageUrl);
+  };
+  const loadImage = (src) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      originalImageRef.current = img;
+      if (canvasRef.current) {
+        canvasRef.current.width = img.width;
+        canvasRef.current.height = img.height;
+        applyAllFilters();
+      }
+    };
+    img.src = src;
+  };
+  const applyAllFilters = () => {
+    if (!canvasRef.current || !originalImageRef.current) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const img = originalImageRef.current;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.rotate(rotation * Math.PI / 180);
+    ctx.scale(flipH ? -1 : 1, flipV ? -1 : 1);
+    let filterString = `
+            brightness(${100 + brightness[0]}%)
+            contrast(${100 + contrast[0]}%)
+            saturate(${100 + saturation[0]}%)
+            blur(${blur[0]}px)
+            hue-rotate(${hue[0]}deg)
+        `.trim().replace(/\s+/g, " ");
+    if (filter === "grayscale") filterString += " grayscale(100%)";
+    else if (filter === "sepia") filterString += " sepia(100%)";
+    else if (filter === "vintage") filterString += " sepia(50%) contrast(110%)";
+    else if (filter === "cool") filterString += " saturate(150%) hue-rotate(90deg)";
+    else if (filter === "warm") filterString += " saturate(120%) sepia(30%)";
+    ctx.filter = filterString;
+    ctx.drawImage(img, -img.width / 2, -img.height / 2);
+    ctx.restore();
+  };
+  const handleDownload = () => {
+    if (!canvasRef.current) return;
+    canvasRef.current.toBlob((blob) => {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `edited-image-${Date.now()}.png`;
+      link.click();
+      URL.revokeObjectURL(url);
+      toast.success("Image downloaded successfully!");
+    }, "image/png");
+  };
+  const resetAll = () => {
+    setBrightness([0]);
+    setContrast([0]);
+    setSaturation([0]);
+    setBlur([0]);
+    setHue([0]);
+    setRotation(0);
+    setFlipH(false);
+    setFlipV(false);
+    setFilter("none");
+    toast.info("All adjustments reset");
+  };
+  return /* @__PURE__ */ React.createElement("div", { className: "container mx-auto px-4 py-12 max-w-7xl" }, /* @__PURE__ */ React.createElement(
+    motion.div,
+    {
+      initial: { opacity: 0, y: 20 },
+      animate: { opacity: 1, y: 0 },
+      className: "text-center mb-12"
+    },
+    /* @__PURE__ */ React.createElement("h1", { className: "text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600 mb-4" }, "Image Editor"),
+    /* @__PURE__ */ React.createElement("p", { className: "text-xl text-gray-400" }, "Professional editing tools for your images")
+  ), /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-1 lg:grid-cols-3 gap-6" }, /* @__PURE__ */ React.createElement(
+    motion.div,
+    {
+      initial: { opacity: 0, x: -20 },
+      animate: { opacity: 1, x: 0 },
+      className: "lg:col-span-1 space-y-6"
+    },
+    /* @__PURE__ */ React.createElement("div", { className: "glass-card p-6" }, /* @__PURE__ */ React.createElement("h3", { className: "text-lg font-semibold text-white mb-4" }, "Load Image"), /* @__PURE__ */ React.createElement(
+      "input",
+      {
+        ref: fileInputRef,
+        type: "file",
+        accept: "image/*",
+        onChange: handleImageUpload,
+        className: "hidden"
+      }
+    ), /* @__PURE__ */ React.createElement(
+      Button,
+      {
+        onClick: () => fileInputRef.current?.click(),
+        className: "w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+      },
+      /* @__PURE__ */ React.createElement(UploadIcon, { className: "w-4 h-4 mr-2" }),
+      "Upload Image"
+    ), galleryImages.length > 0 && /* @__PURE__ */ React.createElement("div", { className: "mt-4" }, /* @__PURE__ */ React.createElement(Label, { className: "text-gray-400 mb-2 block" }, "Or select from gallery:"), /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-3 gap-2 max-h-48 overflow-y-auto" }, galleryImages.slice(0, 9).map((img) => /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        key: img.public_id,
+        onClick: () => handleGallerySelect(img.secure_url),
+        className: "aspect-square rounded-lg overflow-hidden hover:ring-2 hover:ring-purple-500 transition"
+      },
+      /* @__PURE__ */ React.createElement(
+        "img",
+        {
+          src: img.secure_url,
+          alt: img.public_id,
+          className: "w-full h-full object-cover"
+        }
+      )
+    ))))),
+    selectedImage && /* @__PURE__ */ React.createElement("div", { className: "glass-card p-6" }, /* @__PURE__ */ React.createElement(Tabs, { defaultValue: "adjust", className: "w-full" }, /* @__PURE__ */ React.createElement(TabsList, { className: "w-full grid grid-cols-3" }, /* @__PURE__ */ React.createElement(TabsTrigger, { value: "adjust" }, "Adjust"), /* @__PURE__ */ React.createElement(TabsTrigger, { value: "filters" }, "Filters"), /* @__PURE__ */ React.createElement(TabsTrigger, { value: "transform" }, "Transform")), /* @__PURE__ */ React.createElement(TabsContent, { value: "adjust", className: "space-y-6 mt-6" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement(Label, { className: "text-gray-400" }, "Brightness: ", brightness[0]), /* @__PURE__ */ React.createElement(
+      Slider,
+      {
+        value: brightness,
+        onValueChange: setBrightness,
+        min: -100,
+        max: 100,
+        step: 1,
+        className: "mt-2"
+      }
+    )), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement(Label, { className: "text-gray-400" }, "Contrast: ", contrast[0]), /* @__PURE__ */ React.createElement(
+      Slider,
+      {
+        value: contrast,
+        onValueChange: setContrast,
+        min: -100,
+        max: 100,
+        step: 1,
+        className: "mt-2"
+      }
+    )), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement(Label, { className: "text-gray-400" }, "Saturation: ", saturation[0]), /* @__PURE__ */ React.createElement(
+      Slider,
+      {
+        value: saturation,
+        onValueChange: setSaturation,
+        min: -100,
+        max: 100,
+        step: 1,
+        className: "mt-2"
+      }
+    )), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement(Label, { className: "text-gray-400" }, "Blur: ", blur[0], "px"), /* @__PURE__ */ React.createElement(
+      Slider,
+      {
+        value: blur,
+        onValueChange: setBlur,
+        min: 0,
+        max: 20,
+        step: 1,
+        className: "mt-2"
+      }
+    )), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement(Label, { className: "text-gray-400" }, "Hue: ", hue[0], "\xB0"), /* @__PURE__ */ React.createElement(
+      Slider,
+      {
+        value: hue,
+        onValueChange: setHue,
+        min: 0,
+        max: 360,
+        step: 1,
+        className: "mt-2"
+      }
+    ))), /* @__PURE__ */ React.createElement(TabsContent, { value: "filters", className: "space-y-3 mt-6" }, ["none", "grayscale", "sepia", "vintage", "cool", "warm"].map((f) => /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        key: f,
+        onClick: () => setFilter(f),
+        className: `w-full p-3 rounded-lg text-left capitalize transition-all ${filter === f ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white" : "bg-white/5 text-gray-400 hover:bg-white/10"}`
+      },
+      f
+    ))), /* @__PURE__ */ React.createElement(TabsContent, { value: "transform", className: "space-y-4 mt-6" }, /* @__PURE__ */ React.createElement(
+      Button,
+      {
+        onClick: () => setRotation((rotation - 90) % 360),
+        variant: "outline",
+        className: "w-full"
+      },
+      /* @__PURE__ */ React.createElement(RotateCw, { className: "w-4 h-4 mr-2" }),
+      "Rotate Left"
+    ), /* @__PURE__ */ React.createElement(
+      Button,
+      {
+        onClick: () => setRotation((rotation + 90) % 360),
+        variant: "outline",
+        className: "w-full"
+      },
+      /* @__PURE__ */ React.createElement(RotateCw, { className: "w-4 h-4 mr-2 transform scale-x-[-1]" }),
+      "Rotate Right"
+    ), /* @__PURE__ */ React.createElement(
+      Button,
+      {
+        onClick: () => setFlipH(!flipH),
+        variant: "outline",
+        className: "w-full"
+      },
+      /* @__PURE__ */ React.createElement(FlipHorizontal, { className: "w-4 h-4 mr-2" }),
+      "Flip Horizontal"
+    ), /* @__PURE__ */ React.createElement(
+      Button,
+      {
+        onClick: () => setFlipV(!flipV),
+        variant: "outline",
+        className: "w-full"
+      },
+      /* @__PURE__ */ React.createElement(FlipVertical, { className: "w-4 h-4 mr-2" }),
+      "Flip Vertical"
+    ))), /* @__PURE__ */ React.createElement("div", { className: "mt-6 pt-6 border-t border-white/10 space-y-3" }, /* @__PURE__ */ React.createElement(Button, { onClick: handleDownload, className: "w-full bg-green-600 hover:bg-green-700" }, /* @__PURE__ */ React.createElement(Download, { className: "w-4 h-4 mr-2" }), "Download"), /* @__PURE__ */ React.createElement(Button, { onClick: resetAll, variant: "ghost", className: "w-full" }, /* @__PURE__ */ React.createElement(Undo, { className: "w-4 h-4 mr-2" }), "Reset All")))
+  ), /* @__PURE__ */ React.createElement(
+    motion.div,
+    {
+      initial: { opacity: 0, scale: 0.95 },
+      animate: { opacity: 1, scale: 1 },
+      transition: { delay: 0.2 },
+      className: "lg:col-span-2 glass-card p-6"
+    },
+    selectedImage ? /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-center min-h-[600px] bg-gradient-to-br from-purple-900/10 to-pink-900/10 rounded-lg" }, /* @__PURE__ */ React.createElement(
+      "canvas",
+      {
+        ref: canvasRef,
+        className: "max-w-full max-h-[600px] object-contain rounded-lg shadow-2xl"
+      }
+    )) : /* @__PURE__ */ React.createElement("div", { className: "flex flex-col items-center justify-center min-h-[600px] text-gray-400" }, /* @__PURE__ */ React.createElement(ImageIcon, { className: "w-24 h-24 mb-6 opacity-20" }), /* @__PURE__ */ React.createElement("p", { className: "text-2xl font-medium" }, "No image loaded"), /* @__PURE__ */ React.createElement("p", { className: "text-sm mt-2" }, "Upload an image or select from your gallery to start editing"))
+  )));
+}
