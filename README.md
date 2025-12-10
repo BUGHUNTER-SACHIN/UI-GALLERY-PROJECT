@@ -53,7 +53,7 @@ This project is built with:
 - Tailwind CSS
 
 
-Production: https://aethergallery-8j9398msh-sachin-singhs-projects-ceefa864.vercel.app
+Production: https://693945414856811a05e776d1--voluble-semifreddo-9d25ec.netlify.app/
 
 
 
